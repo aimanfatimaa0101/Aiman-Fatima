@@ -1,10 +1,4 @@
-# ✒ InkWell — Full-Stack Blog Platform
-
-A complete CRUD blog web application built with Node.js, Express, MongoDB, and vanilla HTML/CSS/JS.
-
 ## 🗂 Project Structure
-
-```
 blog-app/
 ├── blog-backend/           # Node.js + Express API
 │   ├── models/
@@ -26,9 +20,6 @@ blog-app/
     ├── app.js              # All frontend logic
     └── styles/
         └── main.css        # Complete stylesheet
-```
-
-## 🚀 Setup Instructions
 
 ### Prerequisites
 - Node.js (v18+)
@@ -45,40 +36,15 @@ cp .env.example .env
 
 # Edit .env with your MongoDB URI:
 # MONGODB_URI=mongodb://localhost:27017/blogdb
-# PORT=5000
-```
-
-### 2. Start MongoDB
-```bash
-# If using local MongoDB:
-mongod
-
-# OR use MongoDB Atlas connection string in .env
-```
+# PORT=5000,
 
 ### 3. Seed Sample Data (Optional)
 ```bash
 cd blog-backend
 node seed.js
-```
 
-### 4. Start the Backend
-```bash
-npm run dev    # Development with auto-reload
-# OR
-npm start      # Production
 ```
 The API will be available at `http://localhost:5000`
-
-### 5. Open the Frontend
-Simply open `blog-frontend/index.html` in your browser.
-
-> **Note:** For production, serve the frontend through a web server (nginx, Apache, or `npx serve blog-frontend`)
-
----
-
-## 📡 API Endpoints
-
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/posts` | Get all posts (with pagination, search, filter) |
@@ -99,10 +65,6 @@ Simply open `blog-frontend/index.html` in your browser.
 - `search` - Search in title, description, author
 - `category` - Filter by category
 - `sort` - Sort field (default: -createdAt)
-
----
-
-## 🗄 Database Schema
 
 ### Post
 ```javascript
@@ -137,7 +99,7 @@ Simply open `blog-frontend/index.html` in your browser.
 
 ---
 
-## ✨ Features
+## Features
 
 - **CRUD Operations** — Create, read, update, delete blog posts
 - **Search** — Full-text search across title, description, author
@@ -152,7 +114,7 @@ Simply open `blog-frontend/index.html` in your browser.
 - **Auto Slug** — Slugs auto-generated from titles
 - **View Counter** — Auto-increments on post view
 
-## 🎨 Tech Stack
+## Tech Stack
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **Fonts:** Playfair Display + DM Sans (Google Fonts)
@@ -160,9 +122,6 @@ Simply open `blog-frontend/index.html` in your browser.
 - **Database:** MongoDB with Mongoose ODM
 - **File Upload:** Multer (for image uploads)
 
-## 🌐 Deployment
-
-### Backend (e.g., Railway, Render, Heroku)
 ```bash
 # Set environment variables:
 MONGODB_URI=your_atlas_connection_string
