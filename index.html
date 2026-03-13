@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="InkWell - A modern blog platform for ideas, stories, and knowledge">
+  <title>InkWell — Modern Blog Platform</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✒</text></svg>">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-brand" onclick="navigate('home')">
+    ✒ Ink<span>Well</span>
+  </div>
+  <ul class="navbar-links" id="navLinks">
+    <li><a onclick="navigate('home')" class="active" data-page="home">Home</a></li>
+    <li><a onclick="navigate('create')" data-page="create">Write</a></li>
+    <li><a onclick="navigate('admin')" data-page="admin">Dashboard</a></li>
+    <li><a onclick="navigate('create')" class="btn btn-primary btn-sm">+ New Post</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete Post?</h3>
+    <p>This action cannot be undone. The post will be permanently removed.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="4"/></svg>
+        Stories Worth Reading
+      </div>
+      <h1>Ideas That <em>Inspire</em>,<br>Stories That Matter</h1>
+      <p>Explore thoughtful writing across technology, culture, travel, food, and the human experience.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="scrollToBlogs()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          Explore Posts
+        </button>
+        <button class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,.3)" onclick="navigate('create')">Start Writing</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong id="statPosts">—</strong><span>Published Posts</span></div>
+        <div class="hero-stat"><strong id="statViews">—</strong><span>Total Views</span></div>
+        <div class="hero-stat"><strong id="statLikes">—</strong><span>Post Likes</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search & Filter -->
+  <section class="search-section">
+    <div class="search-inner">
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInput" placeholder="Search posts, authors, topics..." oninput="debounceSearch(this.value)">
+        </div>
+        <button class="btn btn-primary" onclick="doSearch()">Search</button>
+      </div>
+      <div class="category-filters" id="categoryFilters"></div>
+    </div>
+  </section>
+
+  <!-- Blog Posts -->
+  <section class="section" id="blogsSection">
+    <div class="section-inner">
+      <div id="featuredSection"></div>
+      <div class="section-header">
+        <h2 class="section-title">Latest Posts</h2>
+        <span id="resultsInfo" class="text-muted" style="font-size:.85rem"></span>
+      </div>
+      <div id="postsGrid" class="posts-grid"></div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== BLOG DETAIL PAGE ==================== -->
+<div id="page-detail" class="page">
+  <div id="detailContent"></div>
+</div>
+
+<!-- ==================== CREATE / EDIT PAGE ==================== -->
+<div id="page-create" class="page">
+  <div class="form-page">
+    <div class="form-header">
+      <h1 id="formTitle">Write a New Post</h1>
+      <p id="formSubtitle">Share your ideas with the world</p>
+    </div>
+    <div class="form-card">
+      <form id="postForm" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="editPostId">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="fTitle">Title *</label>
+            <input type="text" id="fTitle" class="form-control" placeholder="Enter an engaging title..." required maxlength="200">
+          </div>
+          <div class="form-group full">
+            <label for="fDescription">Short Description *</label>
+            <textarea id="fDescription" class="form-control" rows="2" placeholder="A brief summary of your post (max 500 chars)..." required maxlength="500"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fAuthor">Author Name *</label>
+            <input type="text" id="fAuthor" class="form-control" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <label for="fCategory">Category *</label>
+            <select id="fCategory" class="form-control" required>
+              <option value="">Select category...</option>
+              <option>Technology</option><option>Travel</option><option>Food</option>
+              <option>Lifestyle</option><option>Business</option><option>Health</option>
+              <option>Education</option><option>Entertainment</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fTags">Tags</label>
+            <input type="text" id="fTags" class="form-control" placeholder="tag1, tag2, tag3">
+            <span class="form-hint">Comma-separated tags</span>
+          </div>
+          <div class="form-group">
+            <label for="fDate">Date</label>
+            <input type="date" id="fDate" class="form-control">
+          </div>
+          <div class="form-group full">
+            <label for="fImage">Featured Image URL</label>
+            <input type="url" id="fImage" class="form-control" placeholder="https://example.com/image.jpg" oninput="previewImage(this.value)">
+            <img id="imagePreview" class="image-preview" alt="Preview">
+          </div>
+          <div class="form-group full">
+            <label for="fContent">Content * <span class="form-hint">(HTML supported)</span></label>
+            <textarea id="fContent" class="form-control" rows="14" placeholder="Write your post content here... HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt; are supported." required></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('home')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/></svg>
+            Publish Post
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN DASHBOARD ==================== -->
+<div id="page-admin" class="page">
+  <div class="admin-page">
+    <div class="admin-header">
+      <h1 class="admin-title">Dashboard</h1>
+      <button class="btn btn-primary" onclick="navigate('create')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Post
+      </button>
+    </div>
+    <div class="stats-row" id="adminStats"></div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Views</th>
+            <th>Likes</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>✒ InkWell</h3>
+        <p>A modern blogging platform for sharing ideas, stories, and knowledge with the world. Write, publish, and connect.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a onclick="navigate('home')">Home</a></li>
+          <li><a onclick="navigate('create')">Write a Post</a></li>
+          <li><a onclick="navigate('admin')">Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul id="footerCategories"></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 InkWell. Built with Node.js, Express & MongoDB.</span>
+      <span>Made with ❤ for writers everywhere</span>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
